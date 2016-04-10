@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 # Remove records and labels that are less representative
-import re
 import json
 import codecs
-from nltk.stem import RSLPStemmer
-from nltk.corpus import stopwords
 
 INPUT_FILE = 'vagas_e_cargos.json'
 OUTPUT_FILE = 'vagas_e_cargos_01.json'
@@ -13,24 +10,6 @@ OUTPUT_FILE = 'vagas_e_cargos_01.json'
 MIN_PEOPLE = 50
 # Mininum percent of people in a label (job description)
 MIN_PERC_LABEL = 0.05
-
-def removeHTML(text):
-    "Remove HTML tags and entities from text"
-    return re.sub('<[^>]+?>|&[^;]+;', '', text)
-
-def wordalize(text):
-    "Break in words, avoid punctuation"
-    return re.findall(r'\w+', text, re.UNICODE)
-
-cachedStopWords = stopwords.words('portuguese')
-stemmer = RSLPStemmer()
-def stemify(words):
-    "Remove stop words and stem each word"
-    return [stemmer.stem(word.lower()) for word in words if word.lower() not in cachedStopWords]
-
-def tokenize(text):
-    "Break in words, remove punctuation and stop words and steam every word"
-    return stemify(wordalize(removeHTML(text)))
 
 with codecs.open(INPUT_FILE, 'r', encoding='utf-8') as file_in:
     with codecs.open(OUTPUT_FILE, 'w', encoding='utf-8') as file_out:
@@ -51,4 +30,4 @@ with codecs.open(INPUT_FILE, 'r', encoding='utf-8') as file_in:
             if len(labels) == 0:
                 continue
 
-            file_out.write(json.dumps([tks(title), tks(text), labels]) + '\n')
+            file_out.write(json.dumps([title, text, labels]) + '\n')

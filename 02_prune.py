@@ -29,9 +29,9 @@ with codecs.open(INPUT_FILE, 'r', encoding='utf-8') as file_in:
     for line in file_in:
         record = json.loads(line)
 
-        title = frozenset(record[0])
-        text = frozenset(record[1])
-        labels = frozenset([x[0] for x in record[2] if x[0] != None])
+        title = record[0]
+        text = record[1]
+        labels = frozenset([x[0] for x in record[2]])
 
         label_counter[labels] += 1
         trainingset.add((title, text, labels))
@@ -63,4 +63,4 @@ for (title, text, labels) in trainingset_rejected:
 
 with codecs.open(OUTPUT_FILE, 'w', encoding='utf-8') as file_out:
     for (title, text, labels) in trainingset_first.union(trainingset_second):
-        file_out.write(json.dumps([list(title), list(text), list(labels)]) + '\n')
+        file_out.write(json.dumps([title, text, list(labels)]) + '\n')
