@@ -37,7 +37,7 @@ with codecs.open(INPUT_FILE, 'r', encoding='utf-8') as file_in:
         trainingset.add((title, text, labels))
 
 labelset = frozenset([label for (label, count) in label_counter.iteritems() if count >= CUT_PARAMETER])
-trainingset_first = frozenset([record for record in trainingset if record[2] in labelset])
+trainingset_first = frozenset([record for record in trainingset if record[3] in labelset])
 trainingset_rejected = trainingset - trainingset_first
 
 # Phase 2 - Pruned subsets
