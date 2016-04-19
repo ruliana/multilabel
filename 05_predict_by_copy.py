@@ -108,7 +108,7 @@ for n in range(10):
 preds = [clf.predict(x_test) for clf in clfs]
 preds = [reduce(lambda x, y: x + y, ps) for ps in zip(*preds)]
 
-for n in range(10, 20):
+for n in range(17, 22):
     print('=' * 60)
     print('Threshold: %d' % n)
 
