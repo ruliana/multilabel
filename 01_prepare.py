@@ -51,4 +51,4 @@ with codecs.open(INPUT_FILE, 'r', encoding='utf-8') as file_in:
             if len(labels) == 0:
                 continue
 
-            file_out.write(json.dumps([tks(title), tks(text), labels]) + '\n')
+            file_out.write(json.dumps([tokenize(title), tokenize(text), labels]) + '\n')
