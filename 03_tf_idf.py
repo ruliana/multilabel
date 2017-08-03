@@ -13,12 +13,12 @@ INPUT_FILE = 'vagas_e_cargos_02.json'
 
 identities, texts, labels = zip(*load_data(INPUT_FILE))
 
-    tfidf = TfidfVectorizer(analyzer='word',
-                            strip_accents=None,
-                            stop_words=stopwords.words('portuguese'),
-                            # A tokenização tb faz stemming
-                            tokenizer=tokenize,
-                            min_df=5)
+tfidf = TfidfVectorizer(analyzer='word',
+                        strip_accents=None,
+                        stop_words=stopwords.words('portuguese'),
+                        # A tokenização tb faz stemming
+                        tokenizer=tokenize,
+                        min_df=5)
 
-    tfidf.fit(texts)
-    joblib.dump(tfidf, 'models/tf-idf.pk1')
+tfidf.fit(texts)
+joblib.dump(tfidf, 'models/tf-idf.pk1')

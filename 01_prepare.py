@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 # Remove records and labels that are less representative
+import re
 import json
 import codecs
 from collections import Counter
-
 INPUT_FILE = 'vagas_e_cargos.json'
 OUTPUT_FILE = 'vagas_e_cargos_01.json'
 
@@ -11,6 +11,13 @@ OUTPUT_FILE = 'vagas_e_cargos_01.json'
 MIN_PEOPLE = 50
 # Mininum percent of people in a label (job description)
 MIN_PERC_LABEL = 0.05
+
+def removeHTML(text):
+    "Remove HTML tags and entities from text"
+    text = re.sub('<[^>]+?>|&[^;]+;', ' ', text)
+    text = re.sub('\r?\n', ' ', text)
+    text = re.sub('\\s+', ' ', text)
+    return text
 
 qtde_pre = 0
 counter_pre = Counter()
@@ -26,8 +33,9 @@ with codecs.open(INPUT_FILE, 'r', encoding='utf-8') as file_in:
             record = json.loads(line)
             if not record.has_key(u'cargos'): continue
 
+            identifier = record[u'Cod_vaga']
             title = record[u'cargo_vaga']
-            text = record[u'AnuncioWeb_vaga']
+            description = removeHTML(record[u'AnuncioWeb_vaga'])
             labels = [x for x in record[u'cargos'] if x[0] != None and x[0].strip() != '']
 
             qtde_pre += 1
@@ -47,7 +55,7 @@ with codecs.open(INPUT_FILE, 'r', encoding='utf-8') as file_in:
             counter_pos[lbls] += 1
             unique_pos.update(lbls)
 
-            file_out.write(json.dumps([title, text, labels]) + '\n')
+            file_out.write(json.dumps([identifier, title, description, labels]) + '\n')
 
 print('Antes da limpeza')
 ulabl_pre = len(unique_pre)

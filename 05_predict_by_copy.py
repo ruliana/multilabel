@@ -119,7 +119,7 @@ class BagEnsembleSelector(BaseEstimator):
 def load_sample(filename):
     full_set = load_data_raw(filename)
 
-    X = np.array([title for identity, title, text, label in full_set])
+    X = np.array([text for identity, title, text, label in full_set])
     y = np.array([frozenset(label) for identity, title, text, label in full_set])
 
     # targets = [u'civil engenheiro', u'vendedor', u'enfermeiro', u'arquiteto', u'designer']
