@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
 import json
 import codecs
-from sklearn.feature_extraction.text import TfidfTransformer
+import numpy as np
+from load_data import load_data
+from random import shuffle
+from sklearn.externals import joblib
+from nltk.corpus import stopwords
+from tokenizer import tokenize
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 INPUT_FILE = 'vagas_e_cargos_02.json'
 
-trainingset = []
-labelset = []
-with codecs.open(INPUT_FILE, 'r', encoding='utf-8') as file_in:
-    for line in file_in:
-        record = json.loads(line)
+identities, texts, labels = zip(*load_data(INPUT_FILE))
 
-        title = frozenset(record[0])
-        text = frozenset(record[1])
-        labels = frozenset(record[2])
+tfidf = TfidfVectorizer(analyzer='word',
+                        strip_accents=None,
+                        stop_words=stopwords.words('portuguese'),
+                        # A tokenização tb faz stemming
+                        tokenizer=tokenize,
+                        min_df=5)
 
-        trainingset.append(title.union(text))
-        labelset.append(labels)
-
-transformer = TfidfTransformer()
-tfidf = transformer.fit_transform(training_set)
-
+tfidf.fit(texts)
+joblib.dump(tfidf, 'models/tf-idf.pk1')

@@ -29,22 +29,23 @@ with codecs.open(INPUT_FILE, 'r', encoding='utf-8') as file_in:
     for line in file_in:
         record = json.loads(line)
 
-        title = frozenset(record[0])
-        text = frozenset(record[1])
-        labels = frozenset([x[0] for x in record[2] if x[0] != None])
+        identifier = record[0]
+        title = record[1]
+        text = record[2]
+        labels = frozenset([x[0] for x in record[3]])
 
         label_counter[labels] += 1
-        trainingset.add((title, text, labels))
+        trainingset.add((identifier, title, text, labels))
 
 labelset = frozenset([label for (label, count) in label_counter.iteritems() if count >= CUT_PARAMETER])
-trainingset_first = frozenset([record for record in trainingset if record[2] in labelset])
+trainingset_first = frozenset([record for record in trainingset if record[3] in labelset])
 trainingset_rejected = trainingset - trainingset_first
 
 # Phase 2 - Pruned subsets
 # All label subsets of the rejected records
 # Keep only the ones already in the firt label subset
 label_counter = Counter()
-for (title, text, labels) in trainingset_rejected:
+for (identifier, title, text, labels) in trainingset_rejected:
     new_labels = [label for label in all_combinations(labels) if len(label) > 0 and label in labelset]
     label_counter.update(new_labels)
 
@@ -56,11 +57,11 @@ labelset_second = frozenset([label for (label, count) in label_counter.iteritems
 # for each label subset found in the subset we just
 # created
 trainingset_second = set()
-for (title, text, labels) in trainingset_rejected:
+for (indentifier, title, text, labels) in trainingset_rejected:
     for label in all_combinations(labels):
         if label in labelset_second:
-            trainingset_second.add((title, text, label))
+            trainingset_second.add((identifier, title, text, label))
 
 with codecs.open(OUTPUT_FILE, 'w', encoding='utf-8') as file_out:
-    for (title, text, labels) in trainingset_first.union(trainingset_second):
-        file_out.write(json.dumps([list(title), list(text), list(labels)]) + '\n')
+    for (identifier, title, text, labels) in trainingset_first.union(trainingset_second):
+        file_out.write(json.dumps([identifier, title, text, list(labels)]) + '\n')
